@@ -24,8 +24,8 @@
       // check the MySQL connection status
       $conn = new mysqli($host, $user, $pass);
 
-      $sql = "CREATE DATABASE IF NOT EXISTS menagerie;
-    USE menagerie;
+      $sql = "CREATE DATABASE IF NOT EXISTS cp476;
+    USE cp476;
     
     CREATE TABLE
       `students` (
