@@ -1,7 +1,7 @@
 <?php
 
-include __DIR__ . '/Helper/DotEnv.php';
-(new DotEnv(__DIR__ . '/.env'))->load();
+include $_SERVER['DOCUMENT_ROOT'].'/Helper/DotEnv.php';
+(new DotEnv($_SERVER['DOCUMENT_ROOT'].'/.env'))->load();
 
 $host = 'db';
 $user = 'root';
@@ -12,6 +12,6 @@ $conn = new mysqli($host, $user, $pass, 'cp476');
 if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 } else {
-  echo "Connected successfully<br>";
+  // echo "Connected successfully<br>"; 
 }
 ?>
