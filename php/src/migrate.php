@@ -16,7 +16,10 @@
       // if the form has been submitted, run the migration
       include 'connect_db.php';
 
-      $sql = "CREATE TABLE
+      $sql = "CREATE DATABASE IF NOT EXISTS menagerie;
+    USE menagerie;
+    
+    CREATE TABLE
       `students` (
         `id` int NOT NULL,
         `name` varchar(255) NOT NULL,
