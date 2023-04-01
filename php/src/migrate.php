@@ -14,7 +14,15 @@
   <?php
     if (isset($_POST['submit'])) {
       // if the form has been submitted, run the migration
-      include 'connect_db.php';
+      include __DIR__ . '/Helper/DotEnv.php';
+      (new DotEnv(__DIR__ . '/.env'))->load();
+
+      $host = 'db';
+      $user = 'root';
+      $pass = getenv('MYSQL_ROOT_PASSWORD');
+
+      // check the MySQL connection status
+      $conn = new mysqli($host, $user, $pass);
 
       $sql = "CREATE DATABASE IF NOT EXISTS menagerie;
     USE menagerie;
