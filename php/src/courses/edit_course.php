@@ -1,44 +1,33 @@
 <?php
-include $_SERVER['DOCUMENT_ROOT'].'/header.php'; 
-include $_SERVER['DOCUMENT_ROOT'].'/connect_db.php';
+  include $_SERVER['DOCUMENT_ROOT'].'/header.php'; 
+  include $_SERVER['DOCUMENT_ROOT'].'/connect_db.php';
 
-if (array_key_exists('course_code', $_GET)) { // edit existing course
-  $course_code = $_GET['course_code'];
-  // get the course data from the database
-  $sql = "SELECT * FROM courses WHERE code = '$course_code'";
-  $result = $conn->query($sql);
-  if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    $course_title = $row['title'];
-    $course_instructor = $row['instructor'];
-  } else {
-    echo "Error: Course not found.";
+  if (array_key_exists('course_code', $_GET)) { 
+    // if the course code is in the URL, we are editing the course
+    // get the course code from the URL
+    $course_code = $_GET['course_code'];
+    // get the course data from the database
+    $sql = "SELECT * FROM courses WHERE code = ?;";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $course_code);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+    if ($result->num_rows > 0) {
+      $row = $result->fetch_assoc();
+      $course_title = $row['title'];
+      $course_instructor = $row['instructor'];
+    } else {
+      echo "Error: Course not found.";
+    }
+  } else { 
+    // if the course code is not in the URL, we are adding a new course
+    $course_code = '';
+    $course_title = '';
+    $course_instructor = '';
   }
-} else { // add new course
-  $course_code = '';
-  $course_title = '';
-  $course_instructor = '';
-}
-
-// if the form was submitted, save the data
-if (array_key_exists('save', $_POST)) {
-  
-  echo $course_code;
-  $course_code = $_POST['course_code'];
-  $course_title = $_POST['course_title'];
-  $course_instructor = $_POST['course_instructor'];
-
-  $sql = "INSERT INTO courses (code, title, instructor) 
-          VALUES (?, ?, ?) 
-          ON DUPLICATE KEY UPDATE title = ?, instructor = ?;";
-  $stmt = $conn->prepare($sql);
-  $stmt->bind_param("sssss", $course_code, $course_title, $course_instructor, $course_title, $course_instructor);
-  $stmt->execute();
-  $stmt->close();
-  // redirect to the courses page
-  echo "<meta http-equiv='refresh' content='0;url=/courses'>";
-}
 ?>
+
 <title>Manage Course</title>
 <body class="page">
   <nav aria-label="breadcrumb">
@@ -48,6 +37,46 @@ if (array_key_exists('save', $_POST)) {
       <li class="breadcrumb-item active" aria-current="page">Manage Course</li>
     </ol>
   </nav>
+
+<?php
+if (array_key_exists('save', $_POST)) {
+  // if the form was submitted, save the data
+  // get the form data
+  $course_code = $_POST['course_code'];
+  $course_title = $_POST['course_title'];
+  $course_instructor = $_POST['course_instructor'];
+
+  // validate the data 
+  // TODO: add more validation (e.g. check for duplicate / invalid course codes and course names)
+  if($course_code == '') {
+    echo "<div class='alert alert-danger'>
+            <strong>ERROR!</strong> Course code is a required field.
+          </div>";
+  }
+  else if($course_title == '') {
+    echo "<div class='alert alert-danger'>
+            <strong>ERROR!</strong> Course name is a required field.
+          </div>";
+  }
+  else if($course_instructor == '') {
+    echo "<div class='alert alert-danger'>
+            <strong>ERROR!</strong> Course instructor is a required field.
+          </div>";
+  }
+  else{
+    // save the data to the database while protecting against SQL injection
+    $sql = "INSERT INTO courses (code, title, instructor) 
+            VALUES (?, ?, ?) 
+            ON DUPLICATE KEY UPDATE title = ?, instructor = ?;";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sssss", $course_code, $course_title, $course_instructor, $course_title, $course_instructor);
+    $stmt->execute();
+    $stmt->close();
+    // redirect back to the courses page
+    echo "<meta http-equiv='refresh' content='0;url=/courses'>";
+  }
+}
+?>
 
   <div class="container col-4">
     <div class="row align-items-center">

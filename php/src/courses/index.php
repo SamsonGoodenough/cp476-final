@@ -35,27 +35,29 @@ include $_SERVER['DOCUMENT_ROOT'].'/connect_db.php';
       </thead>
       <tbody>
         <?php
+          // populate the table with data from the database
           $sql = "SELECT * FROM courses";
           $result = $conn->query($sql);
           if ($result->num_rows > 0) {
+            // If there are courses in the database, display them
             while ($row = $result->fetch_assoc()) {
               echo "<tr>
-                <td>" . $row["code"] . "</td>
-                <td>" . $row["title"] . "</td>
-                <td>" . $row["instructor"] . "</td>
-                <td>
-                  <form action='index.php' method='post'>
-                    <a class='btn btn-warning btn-sm' href='edit_course.php?course_code=".$row["code"]."'>Edit</a>
-                    <button class='btn btn-danger btn-sm' type='submit' name='delete' value='" . $row["code"] . "'>Delete</button>
-                  </form>
-                </td>
-              </tr>";
+                      <td>" . $row["code"] . "</td>
+                      <td>" . $row["title"] . "</td>
+                      <td>" . $row["instructor"] . "</td>
+                      <td>
+                        <form action='index.php' method='post'>
+                          <a class='btn btn-warning btn-sm' href='edit_course.php?course_code=".$row["code"]."'>Edit</a>
+                          <button class='btn btn-danger btn-sm' type='submit' name='delete' value='" . $row["code"] . "'>Delete</button>
+                        </form>
+                      </td>
+                    </tr>";
             }
           } else {
-            echo '
-            <tr>
-              <td colspan="4">No data available in table</td>
-            </tr>';
+            // if there are no courses in the database, display a message
+            echo '<tr>
+                    <td colspan="4">No data available in table</td>
+                  </tr>';
           }
           $conn->close();
         ?>

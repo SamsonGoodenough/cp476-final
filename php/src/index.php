@@ -12,11 +12,11 @@
           </div>
           <div class="card-body">
             <h5 class="card-title">Tables</h5>
-            <!-- Four buttons to choose which table user wishes to access -->
-            <button type="button" class="btn btn-primary" onclick="window.location.href='students'">Students</button>
-            <button type="button" class="btn btn-primary" onclick="window.location.href='courses'">Courses</button>
-            <button type="button" class="btn btn-primary" onclick="window.location.href='final_grades'">Final Grades</button>
-            <button type="button" class="btn btn-primary" onclick="window.location.href='marks'">Marks</button>
+            <!-- Four buttons to choose which table user wishes to access with small spaces -->
+              <a type="button" class="btn btn-primary" href="students">Students</a>
+              <a type="button" class="btn btn-primary" href="courses">Courses</a>
+              <a type="button" class="btn btn-primary" href="marks">Marks</a>
+              <a type="button" class="btn btn-primary" href="final_grades">Final Grades</a>
           </div>
         </div>
       </div>
