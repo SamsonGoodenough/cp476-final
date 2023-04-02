@@ -1,3 +1,4 @@
+
 <?php
   include $_SERVER['DOCUMENT_ROOT'].'/header.php'; 
   include $_SERVER['DOCUMENT_ROOT'].'/connect_db.php';
@@ -26,44 +27,14 @@
     $course_title = '';
     $course_instructor = '';
   }
-?>
 
-<title>Manage Course</title>
-<body class="page">
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="/">Home</a></li>
-      <li class="breadcrumb-item"><a href="/courses">Courses</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Manage Course</li>
-    </ol>
-  </nav>
+  if (array_key_exists('save', $_POST)) {
+    // if the form was submitted, save the data
+    // get the form data
+    $course_code = $_POST['course_code'];
+    $course_title = $_POST['course_title'];
+    $course_instructor = $_POST['course_instructor'];
 
-<?php
-if (array_key_exists('save', $_POST)) {
-  // if the form was submitted, save the data
-  // get the form data
-  $course_code = $_POST['course_code'];
-  $course_title = $_POST['course_title'];
-  $course_instructor = $_POST['course_instructor'];
-
-  // validate the data 
-  // TODO: add more validation (e.g. check for duplicate / invalid course codes and course names)
-  if($course_code == '') {
-    echo "<div class='alert alert-danger'>
-            <strong>ERROR!</strong> Course code is a required field.
-          </div>";
-  }
-  else if($course_title == '') {
-    echo "<div class='alert alert-danger'>
-            <strong>ERROR!</strong> Course name is a required field.
-          </div>";
-  }
-  else if($course_instructor == '') {
-    echo "<div class='alert alert-danger'>
-            <strong>ERROR!</strong> Course instructor is a required field.
-          </div>";
-  }
-  else{
     // save the data to the database while protecting against SQL injection
     $sql = "INSERT INTO courses (code, title, instructor) 
             VALUES (?, ?, ?) 
@@ -75,9 +46,19 @@ if (array_key_exists('save', $_POST)) {
     // redirect back to the courses page
     echo "<meta http-equiv='refresh' content='0;url=/courses'>";
   }
-}
 ?>
 
+<title>Manage Course</title>
+<body class="page">
+  <!-- Breadcumbs to navigate to previous pages -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item"><a href="/courses">Courses</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Manage Course</li>
+    </ol>
+  </nav>
+  <!-- Form Container -->
   <div class="container col-4">
     <div class="row align-items-center">
       <div class="col">
@@ -86,18 +67,19 @@ if (array_key_exists('save', $_POST)) {
             <h2 class="text-center"><?php print($course_code != "" ? "Edit":"Add") ?> Course</h2>
           </div>
           <div class="card-body">
-            <form action="edit_course.php" method="post" autocomplete="off">
+            <!-- Add / Edit Course Form -->
+            <form class="needs-validation" action="edit_course.php" method="post" autocomplete="off">
               <div class="form-group mb-3">
                 <label for="course_code">Course Code</label><br>
-                <input class="form-control <?php print($course_code != '' ? 'disabled':'')?>" type="text" name="course_code" value="<?php echo $course_code; ?>" <?php print($course_code != '' ? 'readonly':'')?>>
+                <input class="form-control <?php print($course_code != '' ? 'disabled':'')?>" type="text" name="course_code" value="<?php echo $course_code; ?>" <?php print($course_code != '' ? 'readonly':'')?> required>
               </div>
               <div class="form-group mb-3">
                 <label for="course_name">Course Name</label><br>
-                <input class="form-control" type="text" name="course_title" value="<?php echo $course_title; ?>">
+                <input class="form-control" type="text" name="course_title" value="<?php echo $course_title; ?>" required>
               </div>
               <div class="form-group mb-3">
                 <label for="course_instructor">Course Instructor</label><br>
-                <input class="form-control" type="text" name="course_instructor" value="<?php echo $course_instructor; ?>">
+                <input class="form-control" type="text" name="course_instructor" value="<?php echo $course_instructor; ?>" required>
               </div>
               <div class="d-grid">
                 <button class="btn btn-primary" type="submit" name="save">Save</button>

@@ -12,7 +12,7 @@
           </div>
           <div class="card-body">
             <h5 class="card-title">Tables</h5>
-            <!-- Four buttons to choose which table user wishes to access with small spaces -->
+              <!-- Four buttons to choose which table user wishes to access -->
               <a type="button" class="btn btn-primary" href="students">Students</a>
               <a type="button" class="btn btn-primary" href="courses">Courses</a>
               <a type="button" class="btn btn-primary" href="marks">Marks</a>

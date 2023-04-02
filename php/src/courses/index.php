@@ -4,6 +4,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/connect_db.php';
 ?>
 
 <?php
+  // if the delete button was clicked, delete the course from the database and refresh the page
   if(array_key_exists('delete', $_POST)) {
     $sql = "DELETE FROM courses WHERE code = ?";
     $stmt = $conn->prepare($sql);
@@ -13,8 +14,10 @@ include $_SERVER['DOCUMENT_ROOT'].'/connect_db.php';
     echo "<meta http-equiv='refresh' content='0;url=/courses'>";
   }
 ?>
+
 <title>Courses</title>
 <body class="page">
+  <!-- Breadcumbs to navigate to previous page -->
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="/">Home</a></li>
@@ -22,10 +25,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/connect_db.php';
     </ol>
   </nav>
   <h1>Courses <a class='btn btn-primary right' href='edit_course.php'>Add Course</a></h1>
-  
   <div class="card">
+    <!-- Courses Table -->
     <table class="table table-striped">
       <thead>
+        <!-- Table head -->
         <tr>
           <th scope="col">Course Code</th>
           <th scope="col">Title</th>
@@ -34,6 +38,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/connect_db.php';
         </tr>
       </thead>
       <tbody>
+        <!-- Table Body -->
         <?php
           // populate the table with data from the database
           $sql = "SELECT * FROM courses";
