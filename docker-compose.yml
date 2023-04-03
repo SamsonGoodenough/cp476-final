@@ -1,4 +1,5 @@
 version: '3.8'
+name: cp476
 services:
   php-apache-environment:
     container_name: php-apache
