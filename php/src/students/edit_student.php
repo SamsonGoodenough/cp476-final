@@ -121,6 +121,10 @@
       // set custom validity message
       input.setCustomValidity('Please enter a number');
       return false;
+    } else if(input.name == 'student_name' && input.value != '' && input.value.length > 255) {
+        // set custom validity message
+        input.setCustomValidity('Name is too long');
+        return false;
     } else {
       // clear custom validity message
       input.setCustomValidity('');

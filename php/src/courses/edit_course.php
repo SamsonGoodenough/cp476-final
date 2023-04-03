@@ -80,11 +80,11 @@
               </div>
               <div class="form-group mb-3">
                 <label for="course_name">Course Name</label><br>
-                <input class="form-control" type="text" name="course_title" value="<?php echo $course_title; ?>" required>
+                <input class="form-control" type="text" name="course_title" oninput='validateInput(this)' value="<?php echo $course_title; ?>" required>
               </div>
               <div class="form-group mb-3">
                 <label for="course_instructor">Course Instructor</label><br>
-                <input class="form-control" type="text" name="course_instructor" value="<?php echo $course_instructor; ?>" required>
+                <input class="form-control" type="text" name="course_instructor" oninput='validateInput(this)' value="<?php echo $course_instructor; ?>" required>
               </div>
               <div class="d-grid">
                 <button class="btn btn-primary" type="submit" name="save">Save</button>
@@ -121,7 +121,7 @@
 
 
   function validateCourse(course) {
-    console.log(course.value);
+    // console.log(course.value);
     const regex = /[a-zA-Z]+\d+/gm
     if (course.value == '') {
       // set custom validity message
@@ -131,6 +131,9 @@
       // set custom validity message
       course.setCustomValidity('Course is not in the correct format');
       return false; 
+    } else if(course.value.length > 10) {
+      course.setCustomValidity('Course code is too long');
+      return false;
     }
     else {
       course.setCustomValidity('');
@@ -138,9 +141,13 @@
     }
   }
   function validateInput(input) {
+    console.log(input.value.length)
     if (input.value == '') {
       // set custom validity message
       input.setCustomValidity('Please enter a value');
+      return false;
+    } else if(input.value.length > 255) {
+      input.setCustomValidity('Input is too long');
       return false;
     } else {
       input.setCustomValidity('');

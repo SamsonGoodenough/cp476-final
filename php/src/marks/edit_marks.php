@@ -113,7 +113,7 @@
                 </select>
               </div>
               <div class="form-group mb-3">
-                <select class="form-select" aria-label="" name="course_id" required>
+                <select class="form-select" aria-label="" name="course_id" oninput="validateCourse(this)" required>
                   <option <?php print($course_code != '' ? 'selected':'')?> value=''>Select Course</option>
                       <?php
                         $sql = "SELECT * FROM courses;";
