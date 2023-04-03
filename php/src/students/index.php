@@ -4,14 +4,15 @@ include $_SERVER['DOCUMENT_ROOT'].'/connect_db.php';
 ?>
 
 <?php
-  // if the delete button was clicked, delete the course from the database and refresh the page
+  // if the delete button was clicked, soft delete the student from the database and refresh the page
   if(array_key_exists('delete', $_POST)) {
+    $date = date("Y-m-d H:i:s");
     $sql = "UPDATE students SET deleted_at = ? WHERE id = ?;";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ss", date("Y-m-d H:i:s"), $_POST['delete']);
+    $stmt->bind_param("ss", $date, $_POST['delete']);
     $stmt->execute();
     $stmt->close();
-    echo "<meta http-equiv='refresh' content='0;url=/courses'>";
+    echo "<meta http-equiv='refresh' content='0;url=/students'>";
   }
 ?>
 
@@ -24,7 +25,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/connect_db.php';
       <li class="breadcrumb-item active" aria-current="page">Students</li>
     </ol>
   </nav>
-  <h1>Students <a class='btn btn-primary right' href='edit_course.php'>Add Student</a></h1>
+  <h1>Students <a class='btn btn-primary right' href='edit_student.php'>Add Student</a></h1>
   <div class="card">
     <!-- Students Table -->
     <table class="table table-striped">
@@ -43,7 +44,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/connect_db.php';
           $sql = "SELECT * FROM students WHERE deleted_at IS NULL";
           $result = $conn->query($sql);
           if ($result->num_rows > 0) {
-            // If there are courses in the database, display them
+            // If there are students in the database, display them
             while ($row = $result->fetch_assoc()) {
               echo "<tr>
                       <td>" . $row["id"] . "</td>
@@ -57,9 +58,9 @@ include $_SERVER['DOCUMENT_ROOT'].'/connect_db.php';
                     </tr>";
             }
           } else {
-            // if there are no courses in the database, display a message
+            // if there are no students in the database, display a message
             echo '<tr>
-                    <td colspan="4">No data available in table</td>
+                    <td colspan="3">No data available in table</td>
                   </tr>';
           }
           $conn->close();
