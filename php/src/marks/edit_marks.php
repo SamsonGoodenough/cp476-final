@@ -40,6 +40,7 @@
   if (array_key_exists('save', $_POST)) {
     // if the form was submitted, save the data
     // get the form data
+    $mark_id = $_POST['mark_id'];
     $student_id = $_POST['student_id'];
     $course_id = $_POST['course_id'];
     $test_1 = round($_POST['test_1'],1);
@@ -50,22 +51,37 @@
     
     // save the data to the database while protecting against SQL injection
 
-    $sql = "INSERT INTO marks (student_id, course_code, test_1, test_2, test_3, final_exam) 
-            VALUES (?, ?, ?, ?, ?, ?) 
+    $sql = "INSERT INTO marks (id, student_id, course_code, test_1, test_2, test_3, final_exam) 
+            VALUES (?, ?, ?, ?, ?, ?, ?) 
             ON DUPLICATE KEY UPDATE student_id = ?, course_code = ?, test_1 = ?, test_2 = ?, test_3 = ?, final_exam = ?;";
 
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("isddddisdddd", $student_id, $course_id, $test_1, $test_2, $test_3, $final_exam, $student_id, $course_id, $test_1, $test_2, $test_3, $final_exam);
+    $stmt->bind_param("iisddddisdddd", $mark_id, $student_id, $course_id, $test_1, $test_2, $test_3, $final_exam, $student_id, $course_id, $test_1, $test_2, $test_3, $final_exam);
     $stmt->execute();
 
     // save the final grade to the database while protecting against SQL injection
     $final_grade = $test_1 * 0.2 + $test_2 * 0.2 + $test_3 * 0.2 + $final_exam * 0.4;
-    $sql = "INSERT INTO final_grades (student_id, student_name, course_code, grade)
-            VALUES (?, (SELECT name FROM students WHERE id = ?), ?, ?)
-            ON DUPLICATE KEY UPDATE student_name = (SELECT name FROM students WHERE id = ?), course_code = ?, grade = ?;";
+
+    // check if this student already has a final grade for this course
+    $sql = "SELECT * FROM final_grades WHERE student_id = ? AND course_code = ?;";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("iisdisd", $student_id, $student_id, $course_id, $final_grade, $student_id, $course_id, $final_grade);
+    $stmt->bind_param("is", $student_id, $course_id);
     $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+      // if the student already has a final grade for this course, update the grade
+      $sql = "UPDATE final_grades SET grade = ? WHERE student_id = ? AND course_code = ?;";
+      $stmt = $conn->prepare($sql);
+      $stmt->bind_param("dis", $final_grade, $student_id, $course_id);
+      $stmt->execute();
+    } else {
+      // if the student does not have a final grade for this course, insert the grade
+      $sql = "INSERT INTO final_grades (student_id, student_name, course_code, grade) VALUES (?, (SELECT name FROM students WHERE id = ?), ?, ?);";
+      $stmt = $conn->prepare($sql);
+      $stmt->bind_param("iisd", $student_id, $student_id, $course_id, $final_grade);
+      $stmt->execute();
+    }
+
     $stmt->close();
     // redirect back to the courses page
     echo "<meta http-equiv='refresh' content='0;url=/marks'>";
@@ -158,6 +174,8 @@
               <div class="d-grid">
                 <button class="btn btn-primary" type="submit" name="save">Save</button>
               </div>
+              
+              <input type="hidden" name="mark_id" value="<?php echo $mark_id; ?>">
             </form>
           </div>
         </div>
